@@ -31,4 +31,21 @@ public class ClientService {
 		Client entity = obj.orElseThrow(() -> new ResourceNotFoundException("Clinet not found"));
 		return new ClientDTO(entity);
 	}
+
+	public ClientDTO insert(ClientDTO clientDTO) {
+		Client entity = new Client();
+		entity = clientDtoForClient(clientDTO, entity);
+		entity = clientRepository.save(entity);
+
+		return new ClientDTO(entity);
+	}
+
+	private Client clientDtoForClient(ClientDTO clientDTO, Client entity) {
+		entity.setName(clientDTO.getName());
+		entity.setCpf(clientDTO.getCpf());
+		entity.setIncome(clientDTO.getIncome());
+		entity.setBirthDate(clientDTO.getBirthDate());
+		entity.setChildren(clientDTO.getChildren());
+		return entity;
+	}
 }
