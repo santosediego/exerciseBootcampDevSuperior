@@ -2,6 +2,8 @@ package com.santosediego.dsexercicio.services;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,12 +34,26 @@ public class ClientService {
 		return new ClientDTO(entity);
 	}
 
+	@Transactional
 	public ClientDTO insert(ClientDTO clientDTO) {
 		Client entity = new Client();
 		entity = clientDtoForClient(clientDTO, entity);
 		entity = clientRepository.save(entity);
 
 		return new ClientDTO(entity);
+	}
+
+	@Transactional
+	public ClientDTO update(Long id, ClientDTO clientDTO) {
+		try {
+			Client entity = clientRepository.getOne(id);
+			entity = clientDtoForClient(clientDTO, entity);
+			entity = clientRepository.save(entity);
+
+			return new ClientDTO(entity);
+		}catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}
 	}
 
 	private Client clientDtoForClient(ClientDTO clientDTO, Client entity) {
